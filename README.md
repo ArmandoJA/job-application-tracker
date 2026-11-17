@@ -34,6 +34,7 @@ mysql-connector-python
 Bootstrap 5 and Chart.js, loaded from a CDN (an internet connection is needed to see the styling and the chart)
 
 # Project structure
+'''text
 job-application-tracker/
 │
 ├── app.py                  # Flask routes: pages, CRUD, filters, Job Match
@@ -62,6 +63,7 @@ job-application-tracker/
     ├── contact_form.html
     ├── job_match.html
     └── not_found.html
+'''
 
 # Database
 
