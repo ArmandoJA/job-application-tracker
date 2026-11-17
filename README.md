@@ -169,7 +169,7 @@ DB_PASSWORD | Empty | MySQL password
 DB_NAME | job_tracker | Database name
 ===========================================
 
-Windows (PowerShell):
+# Windows (PowerShell):
 
 $env:DB_HOST = "127.0.0.1"
 
@@ -185,7 +185,8 @@ Replace your_mysql_password with your actual MySQL password.
 
 If your MySQL Server uses port 3306 instead, change DB_PORT to 3306 only if you intend to use that server and have confirmed it is safe to run the database script there.
 
-Windows (Command Prompt):
+
+# Windows (Command Prompt):
 
 set DB_HOST=127.0.0.1
 
@@ -197,7 +198,8 @@ set DB_PASSWORD=your_mysql_password
 
 set DB_NAME=job_tracker
 
-macOS / Linux:
+
+# macOS / Linux:
 
 export DB_HOST=127.0.0.1
 
