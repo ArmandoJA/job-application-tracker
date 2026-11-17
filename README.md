@@ -35,15 +35,24 @@ Bootstrap 5 and Chart.js, loaded from a CDN (an internet connection is needed to
 
 # Project structure
 job_tracker/
+
 ├── app.py              # Flask routes: pages, CRUD, filters, Job Match
+
 ├── database.py         # MySQL connection and query helpers
+
 ├── translations.py     # Spanish text for the interface
+
 ├── schema.sql          # Creates the database, tables and sample data
+
 ├── requirements.txt    # Python dependencies
+
 ├── README.md
 ├── AI_USAGE.md         # How GenAI tools were used
+
 ├── static/
+
 │   └── style.css       # Light and dark themes
+
 └── templates/
     ├── base.html       # Top bar, language and dark mode buttons
     ├── _filters.html   # Shared search and filter pieces
