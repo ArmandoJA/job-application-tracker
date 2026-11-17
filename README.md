@@ -172,9 +172,13 @@ DB_NAME | job_tracker | Database name
 Windows (PowerShell):
 
 $env:DB_HOST = "127.0.0.1"
+
 $env:DB_PORT = "3307"
+
 $env:DB_USER = "root"
+
 $env:DB_PASSWORD = "your_mysql_password"
+
 $env:DB_NAME = "job_tracker"
 
 Replace your_mysql_password with your actual MySQL password.
