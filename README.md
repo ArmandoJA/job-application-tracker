@@ -157,17 +157,17 @@ pip install -r requirements.txt
 The application reads its MySQL connection settings from environment variables.
 
 Variable | Default | Description
--------------------------------------------
+===========================================
 DB_HOST  | 127.0.0.1 | MySQL server address
--------------------------------------------
+===========================================
 DB_PORT | 3307 | MySQL server port
--------------------------------------------
+===========================================
 DB_USER | root | MySQL username
--------------------------------------------
+===========================================
 DB_PASSWORD | Empty | MySQL password
--------------------------------------------
+===========================================
 DB_NAME | job_tracker | Database name
--------------------------------------------
+===========================================
 
 Windows (PowerShell):
 
@@ -188,17 +188,25 @@ If your MySQL Server uses port 3306 instead, change DB_PORT to 3306 only if you 
 Windows (Command Prompt):
 
 set DB_HOST=127.0.0.1
+
 set DB_PORT=3307
+
 set DB_USER=root
+
 set DB_PASSWORD=your_mysql_password
+
 set DB_NAME=job_tracker
 
 macOS / Linux:
 
 export DB_HOST=127.0.0.1
+
 export DB_PORT=3307
+
 export DB_USER=root
+
 export DB_PASSWORD=your_mysql_password
+
 export DB_NAME=job_tracker
 
 Set these variables in the same terminal window used to start the application.
