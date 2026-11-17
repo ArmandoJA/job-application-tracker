@@ -69,88 +69,172 @@ job_type and status are ENUM columns. Status values are Applied, Screening, Inte
 The script includes fictional sample data so the app has something to show right away.
 
 # Setup
+
 1. Requirements
+
 Python 3.9 or newer
-MySQL 8.0.16 or newer, running on your machine (MySQL Workbench is optional but handy)
-2. Get the code
-bash
-git clone <repository-url>
-cd job_tracker
-3. Create the database
 
-Warning: schema.sql starts with DROP DATABASE IF EXISTS job_tracker;, so it replaces any existing database with that name. Run it on a server where that is fine.
+MySQL 8.0.16 or newer
 
-Either open schema.sql in MySQL Workbench and run the whole script (the lightning bolt button), or from a terminal:
+Git
 
-bash
-mysql -u root -p < schema.sql
+MySQL Workbench (optional, but recommended)
 
-You can check it worked with:
+2. Clone the repository
 
-sql
+git clone https://github.com/ArmandoJA/job-application-tracker.git
+cd job-application-tracker
+
+3. Configure MySQL
+
+Important: This project uses MySQL port 3307 by default to keep it separate from other MySQL installations or databases running on port 3306.
+
+The schema.sql script starts with DROP DATABASE IF EXISTS job_tracker;. It deletes and recreates the job_tracker database on whichever MySQL server you connect to.
+
+Make sure you connect to the correct MySQL server on port 3307 before running the script. Do not use port 3306 if it contains databases you want to keep.
+
+Using MySQL Workbench
+
+Open MySQL Workbench.
+
+Create or select a connection to your MySQL Server running on port 3307.
+
+Open the schema.sql file from the cloned project.
+
+Before executing the script, verify your connection by running:
+
+SELECT @@port;
+
+Confirm the result is 3307.
+
+Execute the entire schema.sql script using the lightning bolt button.
+
+Using the command line
+
+On Windows PowerShell, run:
+
+mysql -h 127.0.0.1 -P 3307 -u root -p < schema.sql
+
+Enter your MySQL password when prompted.
+
+If your MySQL username is different from root, replace it with your username.
+
+After running the script, verify the tables were created:
+
 USE job_tracker;
 SHOW TABLES;
 
-You should see applications, companies, contacts and jobs.
+You should see four tables: applications, companies, contacts, and jobs.
 
-4. Install the Python packages
+4. Install Python dependencies
+
+Create a virtual environment:
 
 Windows (PowerShell):
 
-powershell
 python -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
 
-If PowerShell says running scripts is disabled, run this once in the same window and activate again:
+Activate it:
 
-powershell
+.\venv\Scripts\Activate.ps1
+
+If PowerShell says script execution is disabled, run this in the same terminal and activate again:
+
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+
+Install dependencies:
+
+pip install -r requirements.txt
 
 macOS / Linux:
 
-bash
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-5. Tell the app how to reach MySQL
 
-The app reads its connection settings from environment variables, so no password is stored in the code.
+5. Configure the database connection
 
-Variable	Meaning	Default
-DB_HOST	MySQL host	127.0.0.1
-DB_PORT	MySQL port	3307
-DB_USER	MySQL user	root
-DB_PASSWORD	MySQL password	(empty)
-DB_NAME	Database name	job_tracker
+The application reads its MySQL connection settings from environment variables.
 
-The default port is 3307. A standard MySQL installation uses 3306, so most people need to set DB_PORT as shown below, plus DB_PASSWORD if the MySQL user has a password.
+Variable
+
+Default
+
+Description
+
+DB_HOST
+
+127.0.0.1
+
+MySQL server address
+
+DB_PORT
+
+3307
+
+MySQL server port
+
+DB_USER
+
+root
+
+MySQL username
+
+DB_PASSWORD
+
+Empty
+
+MySQL password
+
+DB_NAME
+
+job_tracker
+
+Database name
 
 Windows (PowerShell):
 
-powershell
-$env:DB_PORT = "3306"
+$env:DB_HOST = "127.0.0.1"
+$env:DB_PORT = "3307"
+$env:DB_USER = "root"
 $env:DB_PASSWORD = "your_mysql_password"
+$env:DB_NAME = "job_tracker"
+
+Replace your_mysql_password with your actual MySQL password.
+
+If your MySQL Server uses port 3306 instead, change DB_PORT to 3306 only if you intend to use that server and have confirmed it is safe to run the database script there.
 
 Windows (Command Prompt):
 
-bat
-set DB_PORT=3306
+set DB_HOST=127.0.0.1
+set DB_PORT=3307
+set DB_USER=root
 set DB_PASSWORD=your_mysql_password
+set DB_NAME=job_tracker
 
 macOS / Linux:
 
-bash
-export DB_PORT=3306
+export DB_HOST=127.0.0.1
+export DB_PORT=3307
+export DB_USER=root
 export DB_PASSWORD=your_mysql_password
+export DB_NAME=job_tracker
 
-Set these in the same terminal window you use to start the app.
+Set these variables in the same terminal window used to start the application.
 
-6. Run the app
-bash
+6. Run the application
+
+Make sure your MySQL Server on port 3307 is running and your virtual environment is activated.
+
+Run:
+
 python app.py
 
-Open http://127.0.0.1:5000 in your browser. Stop the app with Ctrl+C.
+Open the application in your browser:
+
+http://127.0.0.1:5000
+
+Press Ctrl+C in the terminal to stop the application.
 
 # Using the app
 Add data: use the Add button on the Companies, Jobs, Applications and Contacts pages. A job needs a company, and an application needs a job.
