@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% import "_filters.html" as f %}
+{% block title %}{{ _("Contacts") }} · {{ _("Job Application Tracker") }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="page-title mb-0">{{ _("Contacts") }}</h1>
+  <a class="btn btn-success" href="{{ url_for('contact_add') }}">{{ _("Add contact") }}</a>
+</div>
+
+<form method="get" class="filter-bar" role="search">
+  <div class="row g-2 align-items-end">
+    {{ f.search(filters.q, _("Name, job title, company or email"), "col-12 col-lg-6") }}
+    {{ f.buttons(url_for('contacts')) }}
+  </div>
+</form>
+{% if filters.active %}<p class="text-muted small">{{ _("{count} result(s)", count=contacts | length) }}</p>{% endif %}
+
+{% if contacts %}
+<div class="table-responsive">
+  <table class="table app-table align-middle">
+    <thead>
+      <tr><th>{{ _("Name") }}</th><th>{{ _("Job title") }}</th><th>{{ _("Company") }}</th><th>{{ _("Email") }}</th><th class="text-end">{{ _("Actions") }}</th></tr>
+    </thead>
+    <tbody>
+      {% for k in contacts %}
+      <tr>
+        <td>{{ k.contact_name }}</td>
+        <td>{{ k.title or '' }}</td>
+        <td>{{ k.company_name }}</td>
+        <td>{% if k.email %}<a href="mailto:{{ k.email }}">{{ k.email }}</a>{% endif %}</td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('contact_edit', contact_id=k.contact_id) }}">{{ _("Edit") }}</a>
+          <form class="d-inline" method="post"
+                action="{{ url_for('contact_delete', contact_id=k.contact_id) }}"
+                data-confirm="{{ _('Delete {name} from your contacts? This cannot be undone.', name=k.contact_name) }}">
+            <button class="btn btn-sm btn-outline-danger" type="submit">{{ _("Delete") }}</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% elif filters.active %}
+<p class="text-muted">{{ _("No contacts match your search.") }} <a href="{{ url_for('contacts') }}">{{ _("Clear search") }}</a></p>
+{% else %}
+<p class="text-muted">{{ _("No contacts yet. Add the people you know at the companies you're tracking.") }}</p>
+{% endif %}
+{% endblock %}

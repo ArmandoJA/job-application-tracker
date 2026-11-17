@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% set heading = _("Add application") if mode == "Add" else _("Edit application") %}
+{% block title %}{{ heading }} · {{ _("Job Application Tracker") }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">{{ heading }}</h1>
+
+{% for e in errors %}
+  <div class="alert alert-danger" role="alert">{{ e }}</div>
+{% endfor %}
+
+{% if not jobs %}
+  <p>{{ _("You need a job before you can log an application.") }}
+     <a href="{{ url_for('job_add') }}">{{ _("Add a job first") }}</a></p>
+{% else %}
+<form method="post" class="form-card" novalidate>
+  <div class="row">
+    <div class="col-md-8 mb-3">
+      <label class="form-label" for="job_id">{{ _("Job *") }}</label>
+      <select class="form-select" id="job_id" name="job_id" required>
+        <option value="">{{ _("Choose a job") }}</option>
+        {% for j in jobs %}
+        <option value="{{ j.job_id }}" {{ 'selected' if (application.get('job_id') | string) == (j.job_id | string) }}>{{ j.job_title }} — {{ j.company_name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4 mb-3">
+      <label class="form-label" for="application_date">{{ _("Date applied *") }}</label>
+      <input class="form-control" type="date" id="application_date" name="application_date"
+             value="{{ application.get('application_date') or '' }}" required>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-4 mb-3">
+      <label class="form-label" for="status">{{ _("Status *") }}</label>
+      <select class="form-select" id="status" name="status">
+        {% for s in statuses %}
+        <option value="{{ s }}" {{ 'selected' if application.get('status') == s }}>{{ _(s) }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-md-4 mb-3">
+      <label class="form-label" for="resume_version">{{ _("Resume version") }}</label>
+      <input class="form-control" id="resume_version" name="resume_version" maxlength="50"
+             placeholder="v2-software" value="{{ application.get('resume_version') or '' }}">
+    </div>
+    <div class="col-md-4 mb-3 d-flex align-items-end">
+      <div class="form-check mb-2">
+        <input class="form-check-input" type="checkbox" id="cover_letter_sent"
+               name="cover_letter_sent" value="1" {{ 'checked' if application.get('cover_letter_sent') }}>
+        <label class="form-check-label" for="cover_letter_sent">{{ _("Cover letter sent") }}</label>
+      </div>
+    </div>
+  </div>
+
+  <h2 class="section-title mt-2">{{ _("Interview details (optional)") }}</h2>
+  <div class="row">
+    <div class="col-md-3 mb-3">
+      <label class="form-label" for="interview_round">{{ _("Round") }}</label>
+      <input class="form-control" type="number" min="1" max="20" id="interview_round"
+             name="interview_round" value="{{ application.get('interview_round') or '' }}">
+    </div>
+    <div class="col-md-5 mb-3">
+      <label class="form-label" for="interview_type">{{ _("Type") }}</label>
+      <input class="form-control" id="interview_type" name="interview_type" maxlength="50"
+             placeholder="{{ _('Technical, HR, Panel...') }}" value="{{ application.get('interview_type') or '' }}">
+    </div>
+    <div class="col-md-4 mb-3">
+      <label class="form-label" for="interview_date">{{ _("Interview date") }}</label>
+      <input class="form-control" type="date" id="interview_date" name="interview_date"
+             value="{{ application.get('interview_date') or '' }}">
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="interviewer">{{ _("Interviewer") }}</label>
+    <input class="form-control" id="interviewer" name="interviewer" maxlength="100"
+           value="{{ application.get('interviewer') or '' }}">
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="interview_notes">{{ _("Notes") }}</label>
+    <textarea class="form-control" id="interview_notes" name="interview_notes" rows="3"
+              maxlength="500">{{ application.get('interview_notes') or '' }}</textarea>
+  </div>
+
+  <button class="btn btn-success" type="submit">{{ _("Save application") }}</button>
+  <a class="btn btn-link" href="{{ url_for('applications') }}">{{ _("Cancel") }}</a>
+</form>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,28 @@
+{# Small building blocks shared by the filter bars on the list pages. #}
+
+{% macro search(value, placeholder, cols="col-12 col-lg-4") %}
+<div class="{{ cols }}">
+  <label class="form-label small mb-1" for="q">{{ _("Search") }}</label>
+  <input class="form-control form-control-sm" type="search" id="q" name="q"
+         value="{{ value }}" placeholder="{{ placeholder }}">
+</div>
+{% endmacro %}
+
+{% macro select(name, label, options, selected, cols="col-6 col-md-3 col-lg-2") %}
+<div class="{{ cols }}">
+  <label class="form-label small mb-1" for="f-{{ name }}">{{ label }}</label>
+  <select class="form-select form-select-sm" id="f-{{ name }}" name="{{ name }}">
+    <option value="">{{ _("Any") }}</option>
+    {% for value, text in options %}
+    <option value="{{ value }}" {{ 'selected' if (selected | string) == (value | string) }}>{{ text }}</option>
+    {% endfor %}
+  </select>
+</div>
+{% endmacro %}
+
+{% macro buttons(clear_url) %}
+<div class="col-auto">
+  <button class="btn btn-sm btn-success" type="submit">{{ _("Apply") }}</button>
+  <a class="btn btn-sm btn-outline-secondary" href="{{ clear_url }}">{{ _("Clear") }}</a>
+</div>
+{% endmacro %}

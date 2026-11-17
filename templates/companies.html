@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% import "_filters.html" as f %}
+{% block title %}{{ _("Companies") }} · {{ _("Job Application Tracker") }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="page-title mb-0">{{ _("Companies") }}</h1>
+  <a class="btn btn-success" href="{{ url_for('company_add') }}">{{ _("Add company") }}</a>
+</div>
+
+<form method="get" class="filter-bar" role="search">
+  <div class="row g-2 align-items-end">
+    {{ f.search(filters.q, _("Company, industry, city or state")) }}
+    {{ f.select("location", _("Location"), location_opts, filters.location, "col-6 col-md-4 col-lg-3") }}
+    {{ f.select("industry", _("Industry"), industry_opts, filters.industry, "col-6 col-md-4 col-lg-3") }}
+    {{ f.buttons(url_for('companies')) }}
+  </div>
+</form>
+{% if filters.active %}<p class="text-muted small">{{ _("{count} result(s)", count=companies | length) }}</p>{% endif %}
+
+{% if companies %}
+<div class="table-responsive">
+  <table class="table app-table align-middle">
+    <thead>
+      <tr><th>{{ _("Company") }}</th><th>{{ _("Industry") }}</th><th>{{ _("Location") }}</th><th>{{ _("Roles applied to") }}</th><th class="text-end">{{ _("Actions") }}</th></tr>
+    </thead>
+    <tbody>
+      {% for c in companies %}
+      <tr>
+        <td><a href="{{ url_for('company_detail', company_id=c.company_id) }}">{{ c.company_name }}</a></td>
+        <td>{{ c.industry or '' }}</td>
+        <td>{{ [c.city, c.state] | select | join(', ') }}</td>
+        <td>
+          {% if c.roles %}
+            {% for role in c.roles %}<div>{{ role.title }} ({{ _(role.status) }})</div>{% endfor %}
+          {% else %}
+            <span class="text-muted">{{ _("None yet") }}</span>
+          {% endif %}
+        </td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('company_edit', company_id=c.company_id) }}">{{ _("Edit") }}</a>
+          <form class="d-inline" method="post"
+                action="{{ url_for('company_delete', company_id=c.company_id) }}"
+                data-confirm="{{ _('Delete {name}? This also deletes its {jobs} job(s), their applications, and {contacts} contact(s). This cannot be undone.', name=c.company_name, jobs=c.job_count, contacts=c.contact_count) }}">
+            <button class="btn btn-sm btn-outline-danger" type="submit">{{ _("Delete") }}</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% elif filters.active %}
+<p class="text-muted">{{ _("No companies match these filters.") }} <a href="{{ url_for('companies') }}">{{ _("Clear filters") }}</a></p>
+{% else %}
+<p class="text-muted">{{ _("No companies yet. Add your first one to start tracking jobs.") }}</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% import "_filters.html" as f %}
+{% block title %}{{ _("Jobs") }} · {{ _("Job Application Tracker") }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="page-title mb-0">{{ _("Jobs") }}</h1>
+  <a class="btn btn-success" href="{{ url_for('job_add') }}">{{ _("Add job") }}</a>
+</div>
+
+{% if chart.counts %}
+<div class="row g-4 mb-4">
+  <div class="col-md-6">
+    <h2 class="section-title">{{ _("Jobs by type") }}</h2>
+    <div class="chart-card">
+      <div class="chart-wrap">
+        <canvas id="typeChart" role="img"
+                aria-label="{{ _('Donut chart of jobs by type: {labels}', labels=chart.labels | join(', ')) }}"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-6">
+    <h2 class="section-title">{{ _("Jobs by industry") }}</h2>
+    <ul class="list-group">
+      {% for row in by_industry %}
+      <li class="list-group-item d-flex justify-content-between align-items-center">
+        {{ row.industry_name }}
+        <span class="badge text-bg-secondary rounded-pill">{{ row.total }}</span>
+      </li>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endif %}
+
+<h2 class="section-title">{{ _("All jobs") }}</h2>
+<form method="get" class="filter-bar" role="search">
+  <div class="row g-2 align-items-end">
+    {{ f.search(filters.q, _("Title, company or skill"), "col-12 col-lg-3") }}
+    {{ f.select("company", _("Company"), company_opts, filters.company) }}
+    {{ f.select("type", _("Type"), type_opts, filters.type) }}
+    {{ f.select("salary", _("Salary"), salary_opts, filters.salary) }}
+    {{ f.select("posted", _("Date posted"), recency_opts, filters.posted) }}
+    {{ f.buttons(url_for('jobs')) }}
+  </div>
+</form>
+{% if filters.active %}<p class="text-muted small">{{ _("{count} result(s)", count=jobs | length) }}</p>{% endif %}
+
+{% if jobs %}
+<div class="table-responsive">
+  <table class="table app-table align-middle">
+    <thead>
+      <tr><th>{{ _("Job title") }}</th><th>{{ _("Company") }}</th><th>{{ _("Type") }}</th><th>{{ _("Salary") }}</th><th>{{ _("Posted") }}</th><th>{{ _("Requirements") }}</th><th class="text-end">{{ _("Actions") }}</th></tr>
+    </thead>
+    <tbody>
+      {% for j in jobs %}
+      <tr>
+        <td>
+          {% if j.job_url %}<a href="{{ j.job_url }}" target="_blank" rel="noopener">{{ j.job_title }}</a>
+          {% else %}{{ j.job_title }}{% endif %}
+        </td>
+        <td>{{ j.company_name }}</td>
+        <td>{{ _(j.job_type) if j.job_type else '' }}</td>
+        <td>
+          {% if j.salary_min is not none and j.salary_max is not none %}${{ "{:,}".format(j.salary_min) }} – ${{ "{:,}".format(j.salary_max) }}
+          {% elif j.salary_min is not none %}{{ _("From {amount}", amount="$" ~ "{:,}".format(j.salary_min)) }}
+          {% elif j.salary_max is not none %}{{ _("Up to {amount}", amount="$" ~ "{:,}".format(j.salary_max)) }}{% endif %}
+        </td>
+        <td>{{ j.date_posted or '' }}</td>
+        <td>{{ j.skills | join(', ') }}</td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('job_edit', job_id=j.job_id) }}">{{ _("Edit") }}</a>
+          <form class="d-inline" method="post" action="{{ url_for('job_delete', job_id=j.job_id) }}"
+                data-confirm="{{ _('Delete {title} at {company}? This also deletes its {count} application(s). This cannot be undone.', title=j.job_title, company=j.company_name, count=j.application_count) }}">
+            <button class="btn btn-sm btn-outline-danger" type="submit">{{ _("Delete") }}</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% elif filters.active %}
+<p class="text-muted">{{ _("No jobs match these filters.") }} <a href="{{ url_for('jobs') }}">{{ _("Clear filters") }}</a></p>
+{% else %}
+<p class="text-muted">{{ _("No jobs yet. Add a job to see your breakdown by type and industry.") }}</p>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{% if chart.counts %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>
+  var css = function (name) {
+    return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+  };
+  var slot = { 'Full-time': '--chart-full', 'Part-time': '--chart-part',
+               'Contract': '--chart-contract', 'Internship': '--chart-intern' };
+  function sliceColors() {
+    return {{ chart.types | tojson }}.map(function (t) { return css(slot[t] || '--chart-none'); });
+  }
+  var typeChart = new Chart(document.getElementById('typeChart'), {
+    type: 'doughnut',
+    data: {
+      labels: {{ chart.labels | tojson }},
+      datasets: [{
+        data: {{ chart.counts | tojson }},
+        backgroundColor: sliceColors(),
+        borderColor: css('--surface'),
+        borderWidth: 2
+      }]
+    },
+    options: {
+      cutout: '58%',
+      plugins: { legend: { position: 'bottom', labels: { color: css('--ink') } } }
+    }
+  });
+  // Recolor the chart text and slice edges when the dark mode button is used.
+  window.addEventListener('themechange', function () {
+    typeChart.data.datasets[0].backgroundColor = sliceColors();
+    typeChart.data.datasets[0].borderColor = css('--surface');
+    typeChart.options.plugins.legend.labels.color = css('--ink');
+    typeChart.update();
+  });
+</script>
+{% endif %}
+{% endblock %}

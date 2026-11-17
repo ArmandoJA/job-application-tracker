@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Dashboard") }} · {{ _("Job Application Tracker") }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">{{ _("Dashboard") }}</h1>
+
+<div class="row g-3 mb-4">
+  <div class="col-6 col-md-3"><div class="stat"><div class="stat-num">{{ counts.companies }}</div><div class="stat-label">Companies</div></div></div>
+  <div class="col-6 col-md-3"><div class="stat"><div class="stat-num">{{ counts.jobs }}</div><div class="stat-label">Jobs</div></div></div>
+  <div class="col-6 col-md-3"><div class="stat"><div class="stat-num">{{ counts.applications }}</div><div class="stat-label">Applications</div></div></div>
+  <div class="col-6 col-md-3"><div class="stat"><div class="stat-num">{{ counts.contacts }}</div><div class="stat-label">Contacts</div></div></div>
+</div>
+
+<div class="row g-4">
+  <div class="col-md-4">
+    <h2 class="section-title">{{ _("Applications by status") }}</h2>
+    {% if by_status %}
+      <table class="table app-table">
+        <tbody>
+          {% for row in by_status %}
+          <tr><td>{{ _(row.status) }}</td><td class="text-end">{{ row.count }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="text-muted">{{ _("No applications yet. Add one to see your pipeline here.") }}</p>
+    {% endif %}
+  </div>
+
+  <div class="col-md-8">
+    <h2 class="section-title">{{ _("Recent applications") }}</h2>
+    {% if recent %}
+      <div class="table-responsive">
+        <table class="table app-table">
+          <thead><tr><th>{{ _("Job") }}</th><th>{{ _("Company") }}</th><th>{{ _("Date applied") }}</th><th>{{ _("Status") }}</th></tr></thead>
+          <tbody>
+            {% for a in recent %}
+            <tr>
+              <td>{{ a.job_title }}</td>
+              <td>{{ a.company_name }}</td>
+              <td>{{ a.application_date }}</td>
+              <td><span class="status-badge st-{{ a.status | lower }}">{{ _(a.status) }}</span></td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-muted">{{ _("Nothing to show yet.") }}</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

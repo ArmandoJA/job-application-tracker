@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% set heading = _("Add company") if mode == "Add" else _("Edit company") %}
+{% block title %}{{ heading }} · {{ _("Job Application Tracker") }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">{{ heading }}</h1>
+
+{% for e in errors %}
+  <div class="alert alert-danger" role="alert">{{ e }}</div>
+{% endfor %}
+
+<form method="post" class="form-card" novalidate>
+  <div class="mb-3">
+    <label class="form-label" for="company_name">{{ _("Company name *") }}</label>
+    <input class="form-control" id="company_name" name="company_name" maxlength="100"
+           value="{{ company.get('company_name') or '' }}" required>
+  </div>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="industry">{{ _("Industry") }}</label>
+      <input class="form-control" id="industry" name="industry" maxlength="50"
+             value="{{ company.get('industry') or '' }}">
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="website">{{ _("Website") }}</label>
+      <input class="form-control" id="website" name="website" maxlength="200"
+             placeholder="https://example.com" value="{{ company.get('website') or '' }}">
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="city">{{ _("City") }}</label>
+      <input class="form-control" id="city" name="city" maxlength="50"
+             value="{{ company.get('city') or '' }}">
+    </div>
+    <div class="col-md-6 mb-3">
+      <label class="form-label" for="state">{{ _("State") }}</label>
+      <input class="form-control" id="state" name="state" maxlength="50"
+             value="{{ company.get('state') or '' }}">
+    </div>
+  </div>
+  <div class="mb-3">
+    <label class="form-label" for="notes">{{ _("Notes") }}</label>
+    <textarea class="form-control" id="notes" name="notes" rows="3">{{ company.get('notes') or '' }}</textarea>
+  </div>
+  <button class="btn btn-success" type="submit">{{ _("Save company") }}</button>
+  <a class="btn btn-link" href="{{ url_for('companies') }}">{{ _("Cancel") }}</a>
+</form>
+{% endblock %}

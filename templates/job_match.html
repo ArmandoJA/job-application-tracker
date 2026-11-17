@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}{{ _("Job Match") }} · {{ _("Job Application Tracker") }}{% endblock %}
+
+{% block content %}
+<h1 class="page-title">{{ _("Job Match") }}</h1>
+
+<form method="get" class="filter-bar" role="search">
+  <label class="form-label small mb-1" for="skills">{{ _("Your skills (separated by commas)") }}</label>
+  <div class="d-flex gap-2">
+    <input class="form-control" type="search" id="skills" name="skills"
+           value="{{ skills_text }}" placeholder="Python, SQL, Flask">
+    <button class="btn btn-success" type="submit">{{ _("Find matches") }}</button>
+  </div>
+  {% if known_skills %}
+  <p class="text-muted small mt-2 mb-0">{{ _("Skills in your tracked jobs: {skills}", skills=known_skills | join(', ')) }}</p>
+  {% endif %}
+</form>
+
+{% if searched %}
+  <p class="text-muted">{{ _("Matching your skills ({skills}) against your jobs, best match first.", skills=user_skills | join(', ')) }}</p>
+
+  {% if results %}
+  <ol class="match-list list-unstyled">
+    {% for r in results %}
+    <li class="match-item">
+      <div class="d-flex justify-content-between flex-wrap gap-2">
+        <div>
+          <span class="match-rank">{{ loop.index }}.</span>
+          {% if r.job_url %}<a href="{{ r.job_url }}" target="_blank" rel="noopener"><strong>{{ r.job_title }}</strong></a>{% else %}<strong>{{ r.job_title }}</strong>{% endif %}
+          {{ _("at") }} {{ r.company_name }}
+        </div>
+        <div class="match-score">{{ r.pct }}% <span class="text-muted">{{ _("({matched}/{total} skills)", matched=r.matched | length, total=r.total) }}</span></div>
+      </div>
+      <div class="match-track" role="img" aria-label="{{ _('{pct} percent match', pct=r.pct) }}">
+        <div class="match-fill" style="width: {{ r.pct }}%"></div>
+      </div>
+      {% if r.matched %}<div class="small">{{ _("Matched: {skills}", skills=r.matched | join(', ')) }}</div>{% endif %}
+      {% if r.missing %}<div class="small">{{ _("Missing: {skills}", skills=r.missing | join(', ')) }}</div>
+      {% else %}<div class="small">{{ _("You have every skill this job lists.") }}</div>{% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+  {% else %}
+  <p class="text-muted">{{ _("No jobs have requirements listed yet. Add requirements to a job (for example Python, SQL) and they'll show up here.") }}</p>
+  {% endif %}
+
+  {% if without_requirements %}
+  <p class="text-muted small">{{ _("{count} job(s) have no requirements listed, so they aren't ranked.", count=without_requirements) }}</p>
+  {% endif %}
+{% else %}
+  <p class="text-muted">{{ _("Enter the skills you have, and your tracked jobs will be ranked by how many of their required skills you match.") }}</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% import "_filters.html" as f %}
+{% block title %}{{ _("Applications") }} · {{ _("Job Application Tracker") }}{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h1 class="page-title mb-0">{{ _("Applications") }}</h1>
+  <a class="btn btn-success" href="{{ url_for('application_add') }}">{{ _("Add application") }}</a>
+</div>
+
+<div class="row g-4 mb-4">
+  <div class="col-lg-5">
+    <h2 class="section-title">{{ _("Applications by status") }}</h2>
+    <div class="status-bars">
+      {% for row in summary %}
+      <div class="status-row st-{{ row.status | lower }}">
+        <span><span class="status-badge st-{{ row.status | lower }}">{{ _(row.status) }}</span></span>
+        <div class="status-track" role="img" aria-label="{{ _('{status}: {count}', status=_(row.status), count=row.total) }}">
+          <div class="status-fill" style="width: {{ row.pct }}%"></div>
+        </div>
+        <span class="status-count">{{ row.total }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<form method="get" class="filter-bar" role="search">
+  <div class="row g-2 align-items-end">
+    {{ f.search(filters.q, _("Job or company"), "col-12 col-lg-3") }}
+    {{ f.select("company", _("Company"), company_opts, filters.company) }}
+    {{ f.select("applied", _("Date applied"), recency_opts, filters.applied) }}
+    {{ f.select("status", _("Status"), status_opts, filters.status) }}
+    {{ f.buttons(url_for('applications')) }}
+  </div>
+</form>
+{% if filters.active %}<p class="text-muted small">{{ _("{count} result(s)", count=applications | length) }}</p>{% endif %}
+
+{% if applications %}
+<div class="table-responsive">
+  <table class="table app-table align-middle">
+    <thead>
+      <tr><th>{{ _("Job") }}</th><th>{{ _("Company") }}</th><th>{{ _("Date applied") }}</th><th>{{ _("Status") }}</th><th class="text-end">{{ _("Actions") }}</th></tr>
+    </thead>
+    <tbody>
+      {% for a in applications %}
+      <tr>
+        <td>{{ a.job_title }}</td>
+        <td>{{ a.company_name }}</td>
+        <td>{{ a.application_date }}</td>
+        <td><span class="status-badge st-{{ a.status | lower }}">{{ _(a.status) }}</span></td>
+        <td class="text-end">
+          <a class="btn btn-sm btn-outline-secondary" href="{{ url_for('application_edit', application_id=a.application_id) }}">{{ _("Edit") }}</a>
+          <form class="d-inline" method="post"
+                action="{{ url_for('application_delete', application_id=a.application_id) }}"
+                data-confirm="{{ _('Delete your application for {job} at {company}? This cannot be undone.', job=a.job_title, company=a.company_name) }}">
+            <button class="btn btn-sm btn-outline-danger" type="submit">{{ _("Delete") }}</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% elif filters.active %}
+<p class="text-muted">{{ _("No applications match these filters.") }} <a href="{{ url_for('applications') }}">{{ _("Clear filters") }}</a></p>
+{% else %}
+<p class="text-muted">{{ _("No applications yet. Add one once you've applied to a job.") }}</p>
+{% endif %}
+{% endblock %}
