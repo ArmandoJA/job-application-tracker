@@ -156,41 +156,18 @@ pip install -r requirements.txt
 
 The application reads its MySQL connection settings from environment variables.
 
-Variable
-
-Default
-
-Description
-
-DB_HOST
-
-127.0.0.1
-
-MySQL server address
-
-DB_PORT
-
-3307
-
-MySQL server port
-
-DB_USER
-
-root
-
-MySQL username
-
-DB_PASSWORD
-
-Empty
-
-MySQL password
-
-DB_NAME
-
-job_tracker
-
-Database name
+Variable | Default | Description
+-------------------------------------------
+DB_HOST  | 127.0.0.1 | MySQL server address
+-------------------------------------------
+DB_PORT | 3307 | MySQL server port
+-------------------------------------------
+DB_USER | root | MySQL username
+-------------------------------------------
+DB_PASSWORD | Empty | MySQL password
+-------------------------------------------
+DB_NAME | job_tracker | Database name
+-------------------------------------------
 
 Windows (PowerShell):
 
