@@ -34,7 +34,7 @@ mysql-connector-python
 Bootstrap 5 and Chart.js, loaded from a CDN (an internet connection is needed to see the styling and the chart)
 
 # Project structure
-'''text
+```text
 job-application-tracker/
 │
 ├── app.py                  # Flask routes: pages, CRUD, filters, Job Match
@@ -63,7 +63,7 @@ job-application-tracker/
     ├── contact_form.html
     ├── job_match.html
     └── not_found.html
-'''
+```
 
 # Database
 
@@ -96,8 +96,10 @@ MySQL Workbench (optional, but recommended)
 
 2. Clone the repository
 
+```python
 git clone https://github.com/ArmandoJA/job-application-tracker.git
 cd job-application-tracker
+```
 
 3. Configure MySQL
 
@@ -116,8 +118,9 @@ Create or select a connection to your MySQL Server running on port 3307.
 Open the schema.sql file from the cloned project.
 
 Before executing the script, verify your connection by running:
-
+```python
 SELECT @@port;
+```
 
 Confirm the result is 3307.
 
@@ -126,46 +129,46 @@ Execute the entire schema.sql script using the lightning bolt button.
 Using the command line
 
 On Windows PowerShell, run:
-
+```python
 mysql -h 127.0.0.1 -P 3307 -u root -p < schema.sql
-
+```
 Enter your MySQL password when prompted.
 
 If your MySQL username is different from root, replace it with your username.
 
 After running the script, verify the tables were created:
-
+```python
 USE job_tracker;
 SHOW TABLES;
-
+```
 You should see four tables: applications, companies, contacts, and jobs.
 
 4. Install Python dependencies
 
 Create a virtual environment:
 
-Windows (PowerShell):
-
+# Windows (PowerShell):
+```python
 python -m venv venv
-
+```
 Activate it:
-
+```python
 .\venv\Scripts\Activate.ps1
-
+```
 If PowerShell says script execution is disabled, run this in the same terminal and activate again:
-
+```python
 Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
-
+```
 Install dependencies:
-
+```python
 pip install -r requirements.txt
-
-macOS / Linux:
-
+```
+# macOS / Linux:
+```python
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-
+```
 5. Configure the database connection
 
 The application reads its MySQL connection settings from environment variables.
@@ -184,7 +187,7 @@ DB_NAME | job_tracker | Database name
 ===========================================
 
 # Windows (PowerShell):
-
+```python
 $env:DB_HOST = "127.0.0.1"
 
 $env:DB_PORT = "3307"
@@ -194,14 +197,14 @@ $env:DB_USER = "root"
 $env:DB_PASSWORD = "your_mysql_password"
 
 $env:DB_NAME = "job_tracker"
-
+```
 Replace your_mysql_password with your actual MySQL password.
 
 If your MySQL Server uses port 3306 instead, change DB_PORT to 3306 only if you intend to use that server and have confirmed it is safe to run the database script there.
 
 
 # Windows (Command Prompt):
-
+```python
 set DB_HOST=127.0.0.1
 
 set DB_PORT=3307
@@ -211,10 +214,10 @@ set DB_USER=root
 set DB_PASSWORD=your_mysql_password
 
 set DB_NAME=job_tracker
-
+```
 
 # macOS / Linux:
-
+```python
 export DB_HOST=127.0.0.1
 
 export DB_PORT=3307
@@ -224,7 +227,7 @@ export DB_USER=root
 export DB_PASSWORD=your_mysql_password
 
 export DB_NAME=job_tracker
-
+```
 Set these variables in the same terminal window used to start the application.
 
 6. Run the application
@@ -232,9 +235,9 @@ Set these variables in the same terminal window used to start the application.
 Make sure your MySQL Server on port 3307 is running and your virtual environment is activated.
 
 Run:
-
+```python
 python app.py
-
+```
 Open the application in your browser:
 
 http://127.0.0.1:5000
