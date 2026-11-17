@@ -24,9 +24,13 @@ Dark mode button. It starts in dark mode when your system or browser is set to d
 
 # Tech stack
 Python 3.9 or newer
+
 Flask 3
+
 MySQL 8.0.16 or newer (needed for the JSON columns and CHECK constraint)
+
 mysql-connector-python
+
 Bootstrap 5 and Chart.js, loaded from a CDN (an internet connection is needed to see the styling and the chart)
 
 # Project structure
